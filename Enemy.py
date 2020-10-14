@@ -26,8 +26,8 @@ class Enemy:
     def draw(self,screen):
         screen.blit(self.enemyImg[self.currImg],(self.enemyX,self.enemyY))
 
-    def shoot(self):
-        laser = Laser(self.enemyX, self.enemyY,20)
+    def shoot(self,speed):
+        laser = Laser( (self.enemyImg[self.currImg].get_height())/2+self.enemyX+Laser.img.get_width()/2,self.enemyImg[self.currImg].get_height()+self.enemyY-5,speed)
         return laser
     
     def getDistanceBorder(self):
@@ -35,6 +35,16 @@ class Enemy:
         right=self.WIN_WIDTH-(self.enemyX+self.enemyImg[0].get_width())
         down=self.WIN_HEIGHT-(self.enemyY+self.enemyImg[0].get_height())
         return (left,right,down)
+    def get_mask(self):
+        return pygame.mask.from_surface(self.enemyImg[self.currImg])
+
+    def collide(self,obj):
+        pos=obj.get_position()
+        maskObj= obj.get_mask()
+        offset=(round(pos[0])- round(self.enemyX),round(pos[1]) - round(self.enemyY))
+        point= self.get_mask().overlap(maskObj,offset)
+        if point:
+            return True
 
 
 class Octopus(Enemy):
